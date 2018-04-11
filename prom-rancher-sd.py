@@ -52,6 +52,7 @@ def monitoring_config(service):
             'stack_name': service['stack_name'],
             'health_state': service['health_state'],
             'system': str(service['system']).lower(),
+            'start_count': str(service['start_count']),
         }
     }
 
