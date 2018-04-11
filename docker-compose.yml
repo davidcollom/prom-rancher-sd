@@ -1,0 +1,41 @@
+version: '2.0'
+
+services:
+  prom-rancher-sd:
+    build: .
+    links:
+      - duckrails:rancher-metadata
+    volumes:
+      - ./prom-rancher-sd.py:/prom-rancher-sd.py
+    environment:
+      RANCHER_METADATA_URL: http://rancher-metadata/2015-12-19
+      SLEEP_TIMER: 5
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:v2.1.0
+    volumes_from:
+      - prom-rancher-sd
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
+
+  duckrails:
+    hostname: rancher-metadata.rancher.internal
+    image: iridakos/duckrails:latest
+    volumes:
+      - ./duckrails/db/production.sqlite3:/opt/duckrails/db/production.sqlite3
+    ports:
+      - 4000:80
+    environment:
+      SECRET_KEY_BASE: 0F5/dSea0ZDR1YZFlUx4cFhgT98U5tHbAip/+W6cUdK5dl1lKizQZCeYM68HGVYL61/4k6IiX5NIASg65Va7GOg/KHJqY+dPBX2qbxwZ+E0Hr9
+
+volumes:
+  prometheus_data:
