@@ -42,19 +42,20 @@ def is_monitored_service(service):
     return 'labels' in service and prometheus_label in service['labels']
 
 def monitoring_config(service):
-    return {
-        "targets": [service['primary_ip'] + ':' + service['labels'][prometheus_label]],
-        "labels": {
-            'instance': service['hostname'],
-            'name': service['name'],
-            'service_name': service['service_name'],
-            'service_index': service['service_index'],
-            'stack_name': service['stack_name'],
-            'health_state': service['health_state'],
-            'system': str(service['system']).lower(),
-            'start_count': str(service['start_count']),
+    if service['primary_ip']:
+        return {
+            "targets": [service['primary_ip'] + ':' + service['labels'][prometheus_label]],
+            "labels": {
+                'instance': service['hostname'],
+                'name': service['name'],
+                'service_name': service['service_name'],
+                'service_index': service['service_index'],
+                'stack_name': service['stack_name'],
+                'health_state': service['health_state'],
+                'system': str(service['system']).lower(),
+                'start_count': str(service['start_count']),
+            }
         }
-    }
 
 
 def get_monitoring_config():
