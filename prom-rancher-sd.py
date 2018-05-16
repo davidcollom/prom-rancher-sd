@@ -43,7 +43,7 @@ def is_monitored_service(service):
 
 def monitoring_config(service):
     return {
-        "targets": [service['primary_ip'] + ':' + service['labels']['com.monitoring.prometheus.port']],
+        "targets": [service['primary_ip'] + ':' + service['labels'][prometheus_label]],
         "labels": {
             'instance': service['hostname'],
             'name': service['name'],
